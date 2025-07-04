@@ -7,9 +7,9 @@ https://github.com/Ousret/niquests-stats/
 ## Setup
 
 ```
-apt install mkcert
-mkcert -install
+apt install mkcert # or brew install mkcert | yum install mkcert | pacman -S mkcert
 mkcert -cert-file ./certs/httpbin.local.pem -key-file ./certs/httpbin.local.key httpbin.local
+mkcert -install
 echo "127.0.0.1   httpbin.local" | sudo tee -a /etc/hosts
 ```
 
