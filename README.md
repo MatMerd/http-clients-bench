@@ -44,9 +44,21 @@ uv run bench-req
 
 ### Actual Results (Arch Linux, AMD Ryzen 5 3600 6-Core, 39GB RAM, Python 3.13.3)
 
+#### Libraries Tested
+
+- **aiohttp**: >=3.13.1
+- **httpcore**: >=1.0.9
+- **httpx**: >=0.28.1
+- **impit**: >=0.7.3
+- **niquests**: >=3.15.2
+- **primp**: >=0.15.0
+- **rnet**: ==3.0.0rc9
+
 | Client | Median (s) | Average (s) | Estimated Throughput |
 |--------|------------|-------------|---------------------|
-| httpx | 0.714 | 0.736 | ~1359 req/s |
-| niquests | 0.535 | 0.579 | ~1727 req/s |
-| niquests core | 0.318 | 0.332 | ~3012 req/s |
-| aiohttp | 0.166 | 0.167 | ~5988 req/s |
+| rnet | 0.191 | 0.192 | ~10393 req/s |
+| impit | 0.216 | 0.220 | ~9077 req/s |
+| aiohttp | 0.277 | 0.284 | ~7038 req/s |
+| niquests core | 0.572 | 0.596 | ~3356 req/s |
+| niquests | 1.013 | 1.010 | ~1981 req/s |
+| httpx | 1.220 | 1.255 | ~1594 req/s |

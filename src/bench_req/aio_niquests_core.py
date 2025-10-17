@@ -1,16 +1,17 @@
 import asyncio
-import statistics
-import time
 
 from urllib3_future import AsyncPoolManager, AsyncHTTPResponse
-import wassima
+
+from bench_req.benchmark import run_benchmark
 
 
-async def fetch(pool: AsyncPoolManager, url: str) -> list[AsyncHTTPResponse]:
+async def fetch(
+    pool: AsyncPoolManager, url: str, requests: int
+) -> list[AsyncHTTPResponse]:
     promises = []
     responses = []
 
-    for _ in range(100):
+    for _ in range(requests):
         promises.append(await pool.urlopen("GET", url, multiplexed=True))
 
     for promise in promises:
@@ -19,25 +20,25 @@ async def fetch(pool: AsyncPoolManager, url: str) -> list[AsyncHTTPResponse]:
     return responses
 
 
-async def main() -> None:
-    aggregate = []
-
-    for _ in range(60):
-        before = time.time()
+async def main(
+    iterations: int = 60,
+    requests: int = 100,
+    connections: int = 10,
+    concurrency: int = 10,
+) -> None:
+    async def benchmark_iteration() -> list:
         async with AsyncPoolManager(
-            maxsize=10, ca_cert_data=wassima.generate_ca_bundle()
+            maxsize=concurrency, ca_certs="./certs/ca.crt"
         ) as s:
             responses_responses = await asyncio.gather(
-                *[fetch(s, "https://httpbin.local:4443/get") for _ in range(10)]
+                *[
+                    fetch(s, "https://httpbin.local:4443/get", requests)
+                    for _ in range(connections)
+                ]
             )
-            _ = [item for sublist in responses_responses for item in sublist]
+            return [item for sublist in responses_responses for item in sublist]
 
-        delay = time.time() - before
-        aggregate.append(delay)
-
-    print("median", statistics.median(aggregate))
-    print("average", sum(aggregate) / len(aggregate))
-    print("total", sum(aggregate))
+    await run_benchmark(benchmark_iteration, iterations, requests, connections)
 
 
 if __name__ == "__main__":

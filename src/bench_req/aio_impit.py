@@ -1,10 +1,11 @@
 import asyncio
-from httpx import AsyncClient, Response, Limits
+
+from impit import AsyncClient
 
 from bench_req.benchmark import run_benchmark
 
 
-async def fetch(s: AsyncClient, url: str, requests: int) -> list[Response]:
+async def fetch(s: AsyncClient, url: str, requests: int) -> list:
     responses = []
 
     for _ in range(requests):
@@ -21,9 +22,8 @@ async def main(
 ) -> None:
     async def benchmark_iteration() -> list:
         async with AsyncClient(
-            http2=True,
-            verify="./certs/ca.crt",
-            limits=Limits(max_connections=concurrency),
+            http3=True,
+            verify=False,
         ) as s:
             responses_responses = await asyncio.gather(
                 *[
