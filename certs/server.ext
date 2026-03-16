@@ -1,0 +1,4 @@
+subjectAltName=DNS:httpbin.local
+basicConstraints=CA:FALSE
+keyUsage=digitalSignature,keyEncipherment
+extendedKeyUsage=serverAuth

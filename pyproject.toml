@@ -1,24 +1,26 @@
 [project]
 name = "bench-req"
-version = "0.1.0"
-description = "HTTP clients benchmarking suite comparing requests, httpx, aiohttp, and niquests performance"
+version = "0.2.0"
+description = "HTTP clients benchmarking suite"
 readme = "README.md"
 authors = [
     { name = "vffuunnyy", email = "vffuunnyy@gmail.com" }
 ]
-requires-python = ">=3.13"
+requires-python = ">=3.14"
 dependencies = [
-    "aiohttp>=3.13.1",
-    "httpcore>=1.0.9",
-    "httpx[http2]>=0.28.1",
-    "impit>=0.7.3",
-    "niquests>=3.15.2",
-    "primp>=0.15.0",
-    "rnet==3.0.0rc9",
+    "aiohttp>=3.13",
+    "httpx[http2]>=0.28",
+    "httpcore[http2]>=1.0",
+    "niquests>=3.18",
+    "impit>=0.12",
+    "primp>=1.1",
+    "rnet>=3.0.0rc22",
+    "requests>=2.32",
+    "rich>=14",
 ]
 
 [project.scripts]
-bench-req = "bench_req:main"
+bench-req = "bench_req.__main__:main"
 
 [build-system]
 requires = ["hatchling"]
