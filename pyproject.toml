@@ -17,6 +17,8 @@ dependencies = [
     "rnet>=3.0.0rc22",
     "requests>=2.32",
     "rich>=14",
+    "httpx-aiohttp>=0.1.12",
+    "curl-cffi>=0.14.0",
 ]
 
 [project.scripts]

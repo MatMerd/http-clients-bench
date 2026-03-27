@@ -2,7 +2,7 @@ import ssl
 
 import httpx
 
-from bench_req.clients.base import AsyncClient
+from bench_req.clients.base import AsyncClient, SyncClient
 from bench_req.config import BenchmarkConfig
 
 
@@ -31,4 +31,32 @@ class Client(AsyncClient):
 
     async def get(self, url: str) -> int:
         resp = await self._client.get(url)
+        return resp.status_code
+
+
+class SyncHTTPClient(SyncClient):
+    name = "httpx"
+    http_versions = ["1.1"]
+
+    def setup(self, config: BenchmarkConfig, http_version: str = "1.1"):
+        ssl_context = ssl.create_default_context(cafile=config.ca_cert)
+        use_http2 = http_version == "2"
+        pool_size = max(config.pool_size, config.concurrency)
+        self._client = httpx.Client(
+            http2=use_http2,
+            http1=not use_http2,
+            verify=ssl_context,
+            limits=httpx.Limits(
+                max_connections=pool_size,
+                max_keepalive_connections=pool_size,
+                keepalive_expiry=30.0,
+            ),
+            timeout=httpx.Timeout(60.0, pool=120.0),
+        )
+
+    def teardown(self):
+        self._client.close()
+
+    def get(self, url: str):
+        resp = self._client.get(url)
         return resp.status_code

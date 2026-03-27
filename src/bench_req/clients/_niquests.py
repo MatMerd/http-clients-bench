@@ -1,6 +1,6 @@
 import niquests
 
-from bench_req.clients.base import AsyncClient
+from bench_req.clients.base import AsyncClient, SyncClient
 from bench_req.config import BenchmarkConfig
 
 
@@ -26,4 +26,29 @@ class Client(AsyncClient):
         resp = await self._session.get(url)
         if self._multiplexed:
             await self._session.gather(resp)
+        return resp.status_code
+
+
+class SyncHTTPClient(SyncClient):
+    name = "niquests"
+    http_versions = ["1.1", "2"]
+
+    def setup(self, config: BenchmarkConfig, http_version: str = "1.1") -> None:
+        use_multiplexed = http_version == "2"
+        pool_size = max(config.pool_size, config.concurrency)
+        self._session = niquests.Session(
+            multiplexed=use_multiplexed,
+            pool_connections=pool_size,
+            pool_maxsize=pool_size,
+        )
+        self._session.verify = config.ca_cert
+        self._multiplexed = use_multiplexed
+
+    def teardown(self) -> None:
+        self._session.close()
+
+    def get(self, url: str) -> int:
+        resp = self._session.get(url)
+        if self._multiplexed:
+            self._session.gather(resp)
         return resp.status_code

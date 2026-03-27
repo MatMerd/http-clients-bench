@@ -6,19 +6,11 @@ SYNC_CLIENTS: list[type[SyncClient]] = []
 
 
 def _register() -> None:
-    from bench_req.clients import (
-        _aiohttp,
-        _httpcore,
-        _httpx,
-        _impit,
-        _niquests,
-        _primp,
-        _requests,
-        _rnet,
-        _urllib3f,
-    )
+    from bench_req.clients import (_aiohttp, _curl_cffi, _httpcore, _httpx,
+                                   _httpx_aiohttp, _impit, _niquests, _primp,
+                                   _requests, _rnet, _urllib3f)
 
-    for mod in (_aiohttp, _httpx, _httpcore, _niquests, _urllib3f, _impit, _primp, _rnet):
+    for mod in (_aiohttp, _httpx, _httpx_aiohttp, _httpcore, _niquests, _urllib3f, _impit, _primp, _rnet):
         if hasattr(mod, "Client"):
             cls = mod.Client
             if "1.1" in cls.http_versions:
@@ -26,7 +18,7 @@ def _register() -> None:
             if "2" in cls.http_versions:
                 ASYNC_HTTP2_CLIENTS.append(cls)
 
-    for mod in (_requests, _primp):
+    for mod in (_httpx, _requests, _primp, ):
         if hasattr(mod, "SyncHTTPClient"):
             SYNC_CLIENTS.append(mod.SyncHTTPClient)
 
