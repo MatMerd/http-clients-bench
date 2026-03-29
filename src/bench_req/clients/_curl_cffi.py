@@ -10,8 +10,9 @@ class Client(AsyncClient):
 
     async def setup(self, config: BenchmarkConfig, http_version: str = "1.1") -> None:
         pool_size = max(config.pool_size, config.concurrency)
+        http_version = "v1" if http_version == "1.1" else "v2"
         self._client = curl_cffi.AsyncSession(
-            http_version=f"v{http_version}",
+            http_version=http_version,
             verify=False,
             max_clients=pool_size,
             timeout=60.0,
@@ -30,9 +31,9 @@ class SyncHTTPClient(SyncClient):
     http_versions = ["1.1"]
 
     def setup(self, config: BenchmarkConfig, http_version: str = "1.1"):
-        pool_size = max(config.pool_size, config.concurrency)
+        http_version = "v1" if http_version == "1.1" else "v2"
         self._client = curl_cffi.Session(
-            http_version=f"v{http_version}",
+            http_version=http_version,
             verify=False,
             timeout=60.0,
         )
